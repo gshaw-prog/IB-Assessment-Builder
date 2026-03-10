@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS Assessment Builder Pro</title>
+    <title>Year 12 Assessment Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -36,6 +36,7 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .info-box { border: 1.5px solid black; padding: 4px 8px; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; }
+        .id-box { width: 2rem; height: 2rem; border: 2px solid black; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -43,18 +44,18 @@
         <!-- App Header -->
         <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print shrink-0 shadow-sm z-10">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded text-white font-black text-xl">CS</div>
+                <div class="bg-slate-900 p-2 rounded text-white font-black text-xl">CS</div>
                 <div>
-                    <h1 class="text-lg font-black text-slate-900 leading-tight uppercase tracking-tighter">Assessment Builder</h1>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Syllabus 2027 Pro</p>
+                    <h1 class="text-lg font-black text-slate-900 leading-tight uppercase tracking-tighter">Mock Builder</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Year 12 Curriculum</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-4">
                 <div class="flex bg-slate-100 p-1 rounded-xl">
-                    <button onclick="switchTab('library')" id="btn-library" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-white shadow-sm text-slate-900">Question Library</button>
+                    <button onclick="switchTab('library')" id="btn-library" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-white shadow-sm text-slate-900">Library</button>
                     <button onclick="switchTab('preview')" id="btn-preview" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 relative">
-                        Exam View
+                        Paper View
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-white hidden">0</span>
                     </button>
                 </div>
@@ -68,25 +69,22 @@
             <div id="tab-library" class="tab-content active h-full flex flex-col overflow-hidden">
                 <div class="bg-white border-b border-slate-200 p-4 px-8 flex flex-wrap gap-4 items-center no-print">
                     <div class="relative inline-block text-left">
-                        <label class="text-[10px] font-black text-slate-400 uppercase block mb-1 tracking-widest">Filter by Component</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase block mb-1 tracking-widest">Filter by Topic</label>
                         <select id="topic-select" onchange="filterByTopic(this.value)" class="block w-72 bg-slate-50 border border-slate-200 text-slate-900 font-medium py-2 px-3 rounded-lg outline-none">
-                            <option value="">All Questions (Paper 1 & 2)</option>
-                            <optgroup label="Paper 1: Core Concepts">
-                                <option value="A1">A1: System Architecture</option>
-                                <option value="A2">A2: Network Communication</option>
-                                <option value="A3">A3: Data Management</option>
-                                <option value="A4">A4: Smart Systems</option>
+                            <option value="">All Questions</option>
+                            <optgroup label="Theoretical Concepts">
+                                <option value="A1">Architecture & Hardware</option>
+                                <option value="A2">Networks & Comms</option>
+                                <option value="A3">Data & Databases</option>
+                                <option value="A4">AI & Smart Systems</option>
                             </optgroup>
-                            <optgroup label="Paper 2: Computational Thinking">
-                                <option value="B1">B1: Logic & Abstraction</option>
-                                <option value="B2">B2: Structures & Algorithms</option>
-                                <option value="B3">B3: Object Orientation</option>
-                                <option value="B4">B4: Control & Modeling</option>
+                            <optgroup label="Practical Thinking">
+                                <option value="B1">Computational Logic</option>
+                                <option value="B2">Algorithms & Structures</option>
+                                <option value="B3">OOP Principles</option>
+                                <option value="B4">Control Systems</option>
                             </optgroup>
                         </select>
-                    </div>
-                    <div class="ml-auto flex gap-2">
-                        <span class="text-xs text-slate-400 self-center font-bold">Total database: <span id="visible-count" class="text-slate-900">0</span> items</span>
                     </div>
                 </div>
 
@@ -102,18 +100,18 @@
                 <div class="max-w-[210mm] mx-auto">
                     <div class="flex justify-between items-center mb-6 no-print bg-white p-4 rounded-xl shadow-lg border border-slate-200">
                         <div class="flex gap-2">
-                            <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 font-black text-xs flex items-center gap-2 transition-all">
+                            <button onclick="window.print()" class="bg-slate-900 text-white px-6 py-2.5 rounded-lg hover:bg-black font-black text-xs flex items-center gap-2 transition-all">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                PRINT ASSESSMENT
+                                PRINT PAPER
                             </button>
                             <button onclick="toggleMarkscheme()" id="toggle-ms" class="bg-slate-100 text-slate-600 px-5 py-2.5 rounded-lg hover:bg-slate-200 font-bold text-xs">
-                                TOGGLE MARKSCHEME
+                                MARKSCHEME
                             </button>
                         </div>
                         <div class="flex items-center gap-6">
                             <div class="text-right">
                                 <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-none mb-1">Total Marks</p>
-                                <p class="text-xl font-black text-slate-900"><span id="total-marks-val">0</span></p>
+                                <p class="text-xl font-black text-slate-900 leading-none"><span id="total-marks-val">0</span></p>
                             </div>
                             <button onclick="clearAssessment()" class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-widest">Clear</button>
                         </div>
@@ -122,49 +120,52 @@
                     <!-- The Exam Document -->
                     <div id="paper-content" class="bg-white shadow-2xl min-h-[297mm] text-slate-900">
                         
-                        <!-- Generic Cover Page -->
+                        <!-- Simplified Cover Page -->
                         <div id="exam-cover" class="p-[25mm] h-[297mm] flex flex-col justify-between">
                             <div class="space-y-10">
                                 <div class="flex justify-between items-start">
                                     <div class="space-y-4">
-                                        <div class="info-box">Unique Identifier</div>
+                                        <div class="info-box">Candidate Number</div>
                                         <div class="flex gap-1">
-                                            ${Array(8).fill('<div class="w-8 h-8 border-2 border-black"></div>').join('')}
+                                            <div class="id-box"></div>
+                                            <div class="id-box"></div>
+                                            <div class="id-box"></div>
+                                            <div class="id-box"></div>
+                                            <div class="id-box"></div>
+                                            <div class="id-box"></div>
                                         </div>
                                     </div>
                                     <div class="text-right uppercase">
                                         <h1 class="text-3xl font-black tracking-tighter leading-none">Computer Science</h1>
-                                        <p class="text-sm font-bold mt-2">Paper 1 & Paper 2 Assessment</p>
-                                        <p class="text-xs text-slate-500 font-bold mt-1">First Assessment Session 2027</p>
+                                        <p class="text-lg font-bold mt-2">Year 12 Mock Paper</p>
                                     </div>
                                 </div>
 
-                                <div class="h-[3px] bg-black w-full"></div>
+                                <div class="h-[2px] bg-black w-full"></div>
 
                                 <div class="flex justify-between font-bold text-sm bg-slate-50 p-4 border border-slate-200">
-                                    <span id="current-date">Mock Examination</span>
-                                    <span>Time allowed: 1 hour 45 minutes</span>
+                                    <span id="current-date">Terminal Assessment</span>
+                                    <span>Time allowed: 1 hour 30 minutes</span>
                                 </div>
 
                                 <div class="space-y-6 pt-6">
-                                    <h4 class="font-black text-sm uppercase tracking-widest border-b-2 border-black pb-1">Instructions</h4>
+                                    <h4 class="font-black text-sm uppercase tracking-widest border-b-2 border-black pb-1">Candidate Instructions</h4>
                                     <ul class="text-sm space-y-4 font-medium list-disc ml-5 leading-relaxed">
-                                        <li>Write your unique identifier in the boxes at the top of this page.</li>
+                                        <li>Write your candidate number in the boxes at the top of this page.</li>
                                         <li>Answer all questions in the spaces provided.</li>
-                                        <li>A scientific calculator is permitted for both components.</li>
-                                        <li>This paper contains a mixture of core theoretical concepts and computational thinking applications.</li>
+                                        <li>Ensure all diagrams are drawn clearly.</li>
                                         <li>The maximum mark for this paper is [<span id="cover-total-marks">0</span> marks].</li>
                                     </ul>
                                 </div>
                             </div>
 
-                            <div class="text-center border-[6px] border-black p-6 my-12">
+                            <div class="text-center border-4 border-black p-8 my-12">
                                 <p class="font-black text-2xl uppercase tracking-tighter">Do not open this paper until instructed to do so.</p>
                             </div>
                             
                             <div class="flex justify-between items-end text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-8 border-t border-slate-100">
-                                <span>Curriculum Standard 2027</span>
-                                <span>Ref: CS-COMP-27</span>
+                                <span>Academic Year 2026/27</span>
+                                <span>Ref: Y12-CS-MOCK</span>
                             </div>
                         </div>
 
@@ -176,8 +177,8 @@
                         <!-- Markscheme Page -->
                         <div id="ms-container" class="hidden p-[20mm] page-break border-t-[20px] border-slate-900">
                             <div class="border-b-4 border-slate-900 pb-4 mb-10">
-                                <h2 class="text-4xl font-black uppercase tracking-tighter">Assessment Guide</h2>
-                                <p class="text-sm font-bold text-slate-500 italic mt-1 uppercase tracking-widest">Marking Criteria & Model Answers</p>
+                                <h2 class="text-4xl font-black uppercase tracking-tighter">Markscheme</h2>
+                                <p class="text-sm font-bold text-slate-500 italic mt-1 uppercase tracking-widest">Year 12 Assessment Guide</p>
                             </div>
                             <div id="ms-questions" class="space-y-10"></div>
                         </div>
@@ -189,21 +190,16 @@
 
     <script>
         const questionData = [
-            // PAPER 1 (A-series)
-            { id: 1, cat: 'A1.1', type: 'P1', text: "Identify the part of the CPU responsible for managing the fetch-execute cycle.", marks: 1, ans: "Control Unit (CU)." },
-            { id: 2, cat: 'A1.1', type: 'P1', text: "Explain how the Memory Address Register (MAR) and Memory Data Register (MDR) work together during a read operation.", marks: 4, ans: "MAR holds address [1]; sent via address bus [1]; MDR receives the data at that address [1] via data bus [1]." },
-            { id: 3, cat: 'A2.1', type: 'P1', text: "Outline the function of a Router in a Wide Area Network (WAN).", marks: 2, ans: "Inspects packet headers [1]; Determines most efficient path across networks [1]." },
-            { id: 4, cat: 'A2.3', type: 'P1', text: "Describe why data compression is necessary when transmitting large video files over a network.", marks: 3, ans: "Reduces bandwidth consumption [1]; speeds up transmission time [1]; reduces storage requirements on the receiving device [1]." },
-            { id: 5, cat: 'A3.1', type: 'P1', text: "Explain the importance of 'Data Integrity' in a relational database system.", marks: 3, ans: "Ensures data is accurate and consistent [1]; prevents orphan records via referential integrity [1]; maintains trust in the information system [1]." },
-            { id: 6, cat: 'A4.1', type: 'P1', text: "Discuss the ethical implications of using 'Machine Learning' algorithms in automated hiring systems.", marks: 6, ans: "Potential for bias in training data [2]; lack of transparency in decision making (black box) [2]; accountability for unfair outcomes [2]." },
-
-            // PAPER 2 (B-series)
-            { id: 10, cat: 'B1.1', type: 'P2', text: "Define 'Decomposition' and provide a relevant example in software development.", marks: 3, ans: "Breaking a complex problem into smaller parts [1]; Example: Breaking a game into physics, input, and graphics modules [2]." },
-            { id: 11, cat: 'B2.2', type: 'P2', text: "Compare the use of a 'Stack' vs a 'Queue' for managing print jobs in a shared office environment.", marks: 4, ans: "Queue is FIFO (Fairness) [1]; Jobs printed in order received [1]; Stack is LIFO [1]; most recent job printed first (usually undesirable here) [1]." },
-            { id: 12, cat: 'B2.4', type: 'P2', text: "Trace a Bubble Sort algorithm for the following list: [5, 2, 8, 1]. Show only the state of the list after each complete pass.", marks: 4, ans: "Pass 1: [2, 5, 1, 8] [2]; Pass 2: [2, 1, 5, 8] [1]; Pass 3: [1, 2, 5, 8] [1]." },
-            { id: 13, cat: 'B3.1', type: 'P2', text: "Explain the concept of 'Polymorphism' using a code-based example (e.g., a 'Shape' class).", marks: 4, ans: "Ability of different classes to be treated as instances of same parent class [1]; Different implementations of same method [1]; Example: Circle.draw() vs Square.draw() called via Shape list [2]." },
-            { id: 14, cat: 'B4.1', type: 'P2', text: "Identify two sensors required for an automated climate control system in a greenhouse.", marks: 2, ans: "Temperature sensor [1]; Humidity/Moisture sensor [1]." },
-            { id: 15, cat: 'B4.2', type: 'P2', text: "Evaluate the use of computer simulations for testing aircraft wing stress before physical prototypes are built.", marks: 5, ans: "Saves cost [1]; safer for testing failure points [1]; can iterate designs quickly [1]; limitation: only as accurate as the mathematical model [1]; edge cases might be missed [1]." }
+            { id: 1, cat: 'A1.1', type: 'CORE', text: "Identify the part of the CPU responsible for managing the fetch-execute cycle.", marks: 1, ans: "Control Unit (CU)." },
+            { id: 2, cat: 'A1.1', type: 'CORE', text: "Explain how the Memory Address Register (MAR) and Memory Data Register (MDR) work together during a read operation.", marks: 4, ans: "MAR holds address [1]; sent via address bus [1]; MDR receives the data at that address [1] via data bus [1]." },
+            { id: 3, cat: 'A2.1', type: 'CORE', text: "Outline the function of a Router in a Wide Area Network (WAN).", marks: 2, ans: "Inspects packet headers [1]; Determines most efficient path across networks [1]." },
+            { id: 4, cat: 'A2.3', type: 'CORE', text: "Describe why data compression is necessary when transmitting large video files over a network.", marks: 3, ans: "Reduces bandwidth consumption [1]; speeds up transmission time [1]; reduces storage requirements on the receiving device [1]." },
+            { id: 5, cat: 'A3.1', type: 'CORE', text: "Explain the importance of 'Data Integrity' in a relational database system.", marks: 3, ans: "Ensures data is accurate and consistent [1]; prevents orphan records via referential integrity [1]; maintains trust in the information system [1]." },
+            { id: 6, cat: 'A4.1', type: 'CORE', text: "Discuss the ethical implications of using 'Machine Learning' algorithms in automated hiring systems.", marks: 6, ans: "Potential for bias in training data [2]; lack of transparency in decision making (black box) [2]; accountability for unfair outcomes [2]." },
+            { id: 10, cat: 'B1.1', type: 'PRACTICAL', text: "Define 'Decomposition' and provide a relevant example in software development.", marks: 3, ans: "Breaking a complex problem into smaller parts [1]; Example: Breaking a game into physics, input, and graphics modules [2]." },
+            { id: 11, cat: 'B2.2', type: 'PRACTICAL', text: "Compare the use of a 'Stack' vs a 'Queue' for managing print jobs in a shared office environment.", marks: 4, ans: "Queue is FIFO (Fairness) [1]; Jobs printed in order received [1]; Stack is LIFO [1]; most recent job printed first (usually undesirable here) [1]." },
+            { id: 12, cat: 'B2.4', type: 'PRACTICAL', text: "Trace a Bubble Sort algorithm for the following list: [5, 2, 8, 1]. Show only the state of the list after each complete pass.", marks: 4, ans: "Pass 1: [2, 5, 1, 8] [2]; Pass 2: [2, 1, 5, 8] [1]; Pass 3: [1, 2, 5, 8] [1]." },
+            { id: 13, cat: 'B3.1', type: 'PRACTICAL', text: "Explain the concept of 'Polymorphism' using a code-based example (e.g., a 'Shape' class).", marks: 4, ans: "Ability of different classes to be treated as instances of same parent class [1]; Different implementations of same method [1]; Example: Circle.draw() vs Square.draw() called via Shape list [2]." }
         ];
 
         let cart = [];
@@ -212,22 +208,20 @@
         function renderQuestions(filter = '') {
             const container = document.getElementById('question-container');
             container.innerHTML = '';
-            
             const filtered = filter ? questionData.filter(q => q.cat.startsWith(filter)) : questionData;
-            document.getElementById('visible-count').innerText = filtered.length;
-
+            
             filtered.forEach(q => {
                 const inCart = cart.find(item => item.id === q.id);
                 container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl border-2 ${inCart ? 'border-blue-600 ring-4 ring-blue-50' : 'border-slate-200'} transition-all hover:shadow-md flex flex-col group">
+                    <div class="bg-white p-6 rounded-xl border-2 ${inCart ? 'border-slate-900 ring-4 ring-slate-100' : 'border-slate-200'} transition-all hover:shadow-md flex flex-col">
                         <div class="flex justify-between items-center mb-4">
-                            <span class="px-2 py-1 rounded bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">${q.type} | ${q.cat}</span>
+                            <span class="px-2 py-1 rounded bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">${q.cat}</span>
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${q.marks} Marks</span>
                         </div>
                         <p class="text-slate-900 font-bold mb-8 flex-1 leading-snug">${q.text}</p>
                         <button onclick="toggleCart(${q.id})" 
-                                class="w-full py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${inCart ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white'}">
-                            ${inCart ? 'Remove' : 'Add Question'}
+                                class="w-full py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${inCart ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white'}">
+                            ${inCart ? 'Remove' : 'Add to Paper'}
                         </button>
                     </div>
                 `;
@@ -261,36 +255,26 @@
             ms.innerHTML = '';
 
             if (cart.length === 0) {
-                paper.innerHTML = `<div class="text-center py-24 text-slate-300 no-print flex flex-col items-center gap-4">
-                    <p class="text-lg font-black uppercase tracking-tighter text-slate-400">Add questions to see preview</p>
-                </div>`;
+                paper.innerHTML = `<div class="text-center py-24 text-slate-300 no-print"><p class="font-black uppercase tracking-widest">Select questions to build paper</p></div>`;
                 return;
             }
 
             cart.forEach((q, i) => {
-                const lineCount = Math.max(2, Math.floor(q.marks * 2.5));
+                const lines = Math.max(2, Math.floor(q.marks * 2.5));
                 paper.innerHTML += `
                     <div class="relative pb-10">
                         <div class="flex justify-between items-baseline mb-3">
-                            <span class="font-black text-xl tracking-tighter">${i + 1}.</span>
-                            <span class="font-bold text-sm tracking-tight text-slate-500 uppercase">${q.type} - [${q.marks} Marks]</span>
+                            <span class="font-black text-xl">${i + 1}.</span>
+                            <span class="font-bold text-sm text-slate-500">[${q.marks} Marks]</span>
                         </div>
                         <p class="text-lg font-medium leading-relaxed mb-6">${q.text}</p>
-                        <div class="writing-space">
-                            ${Array(lineCount).fill('<div class="writing-line"></div>').join('')}
-                        </div>
+                        <div>${Array(lines).fill('<div class="writing-line"></div>').join('')}</div>
                     </div>
                 `;
 
                 ms.innerHTML += `
                     <div class="border-b border-slate-200 pb-10">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h4 class="font-black text-2xl tracking-tighter uppercase">Question ${i + 1}</h4>
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${q.type} | ${q.cat}</span>
-                            </div>
-                            <span class="bg-slate-900 text-white px-3 py-1 rounded text-xs font-black">MARK TOTAL: ${q.marks}</span>
-                        </div>
+                        <h4 class="font-black text-2xl tracking-tighter uppercase mb-2">Question ${i + 1}</h4>
                         <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
                             <p class="text-slate-800 font-medium whitespace-pre-wrap leading-relaxed">${q.ans}</p>
                         </div>
@@ -311,18 +295,17 @@
             const libBtn = document.getElementById('btn-library');
             const preBtn = document.getElementById('btn-preview');
             
-            libBtn.className = `px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${isLib ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-900'}`;
-            preBtn.className = `px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${!isLib ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-900'} relative`;
+            libBtn.className = `px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${isLib ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'}`;
+            preBtn.className = `px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${!isLib ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'} relative`;
         }
 
         function toggleMarkscheme() {
             showMarkscheme = !showMarkscheme;
             document.getElementById('ms-container').classList.toggle('hidden', !showMarkscheme);
-            document.getElementById('toggle-ms').innerText = showMarkscheme ? "HIDE MARKSCHEME" : "SHOW MARKSCHEME";
         }
 
         function clearAssessment() {
-            if (confirm('Are you sure you want to clear the paper?')) {
+            if (confirm('Clear the paper?')) {
                 cart = [];
                 updateUI();
             }
@@ -330,7 +313,7 @@
 
         window.onload = () => {
             renderQuestions();
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('current-date').innerText = "Academic Year 2026/27";
         };
     </script>
 </body>
