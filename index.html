@@ -31,15 +31,17 @@
             .page-break { page-break-before: always; }
             .exam-container { padding: 0 !important; max-width: 100% !important; }
             header, .controls { display: none !important; }
+            #paper-content { box-shadow: none !important; border: none !important; }
         }
 
-        .dropdown:hover .dropdown-menu { display: block; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
     <div class="flex flex-col h-screen overflow-hidden">
         <!-- Header -->
-        <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print shrink-0 shadow-sm">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print shrink-0 shadow-sm z-10">
             <div class="flex items-center gap-3">
                 <div class="bg-blue-600 p-2 rounded-lg">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -70,25 +72,29 @@
                 <div class="bg-white border-b border-slate-200 p-4 px-8 flex flex-wrap gap-4 items-center no-print">
                     <div class="relative inline-block text-left group">
                         <label class="text-xs font-bold text-slate-400 uppercase block mb-1">Filter by Theme</label>
-                        <select id="topic-select" onchange="filterByTopic(this.value)" class="block w-64 bg-slate-50 border border-slate-200 text-slate-700 py-2 px-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <select id="topic-select" onchange="filterByTopic(this.value)" class="block w-72 bg-slate-50 border border-slate-200 text-slate-700 py-2 px-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
                             <option value="">All Syllabus Topics</option>
-                            <option value="A1">Theme A1: Hardware & Operation</option>
-                            <option value="A2">Theme A2: Networks & Web</option>
-                            <option value="A3">Theme A3: Databases</option>
-                            <option value="A4">Theme A4: Machine Learning</option>
-                            <option value="B1">Theme B1: Computational Thinking</option>
-                            <option value="B2">Theme B2: Data Structures</option>
-                            <option value="B3">Theme B3: OOP</option>
-                            <option value="B4">Theme B4: Control Systems</option>
+                            <optgroup label="Theme A: Concepts">
+                                <option value="A1">A1: Computer Fundamentals</option>
+                                <option value="A2">A2: Networks & Web</option>
+                                <option value="A3">A3: Databases</option>
+                                <option value="A4">A4: Machine Learning</option>
+                            </optgroup>
+                            <optgroup label="Theme B: Computational Thinking">
+                                <option value="B1">B1: Approaches to CT</option>
+                                <option value="B2">B2: Data Structures & Algorithms</option>
+                                <option value="B3">B3: Object-Oriented Programming</option>
+                                <option value="B4">B4: Control Systems & Modeling</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="ml-auto flex gap-2">
-                        <span class="text-sm text-slate-400 self-center">Showing <span id="visible-count" class="font-bold text-slate-700">0</span> questions</span>
+                        <span class="text-sm text-slate-400 self-center">Showing <span id="visible-count" class="font-bold text-slate-700">0</span> questions from database</span>
                     </div>
                 </div>
 
                 <!-- Scrollable Grid -->
-                <div class="flex-1 overflow-y-auto p-8">
+                <div class="flex-1 overflow-y-auto p-8 bg-slate-50">
                     <div id="question-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Questions JS -->
                     </div>
@@ -103,7 +109,7 @@
                         <div class="flex gap-2">
                             <button onclick="window.print()" class="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-black font-bold flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                Save as PDF / Print
+                                Print / Save as PDF
                             </button>
                             <button onclick="toggleMarkscheme()" id="toggle-ms" class="bg-blue-50 text-blue-700 px-5 py-2.5 rounded-lg hover:bg-blue-100 font-bold">
                                 Show Markscheme
@@ -152,17 +158,47 @@
 
     <script>
         const questionData = [
+            // A1 Hardware & Architecture
             { id: 1, cat: 'A1.1', text: "Identify the part of the CPU that performs logical comparisons.", marks: 1, ans: "Arithmetic Logic Unit (ALU)." },
             { id: 2, cat: 'A1.1', text: "Explain the role of the Memory Data Register (MDR) in the fetch-execute cycle.", marks: 3, ans: "Holds the data/instruction fetched from memory [1]; or data waiting to be written [1]; acts as a buffer between memory and CPU [1]." },
             { id: 3, cat: 'A1.1', text: "Outline the function of the Program Counter (PC).", marks: 2, ans: "Holds the memory address [1] of the next instruction to be fetched [1]." },
             { id: 4, cat: 'A1.1', text: "Describe how the address bus and data bus are used when the CPU fetches an instruction.", marks: 4, ans: "Address bus carries location [1]; Data bus carries content [1]; Coordinated by CU [1]; Unidirectional vs Bidirectional [1]." },
+            { id: 50, cat: 'A1.2', text: "Distinguish between a supercomputer and a mainframe server.", marks: 3, ans: "Supercomputers focus on raw floating-point speed [1]; Mainframes focus on massive I/O and transaction reliability [1]; Multi-user capacity vs specific research tasks [1]." },
+            { id: 51, cat: 'A1.2', text: "Explain the purpose of an Operating System acting as an interface between user and hardware.", marks: 4, ans: "Hides hardware complexity (Abstraction) [1]; Provides GUI/CLI [1]; Manages resource allocation [1]; Executes system calls [1]." },
             { id: 11, cat: 'A1.3', text: "Convert the decimal value -25 into 8-bit Two’s Complement. Show your working.", marks: 3, ans: "25=00011001 [1]. Invert: 11100110 [1]. Add 1: 11100111 [1]." },
-            { id: 18, cat: 'A2.2', text: "Discuss the social and ethical issues of the 'Internet of Things' (IoT) in a domestic setting.", marks: 6, ans: "Security/Privacy risks (unauthorized access) [2]. Data volume issues (storage/analysis) [2]. Interoperability vs environmental sustainability [2]." },
+            { id: 52, cat: 'A1.3', text: "Explain why the hexadecimal system is preferred over binary by computer programmers.", marks: 2, ans: "Hex is more compact/easier for humans to read [1]; 1 hex digit represents exactly 4 bits (nibble) making conversion trivial [1]." },
+
+            // A2 Networks
+            { id: 14, cat: 'A2.1', text: "Define 'Protocol' and identify two necessary elements for a successful connection.", marks: 3, ans: "Set of rules [1]. Elements: Syntax (format), Semantics (meaning), Timing (speed) [2]." },
+            { id: 53, cat: 'A2.1', text: "Explain how Packet Switching ensures data is transmitted efficiently across a network.", marks: 4, ans: "Data broken into packets [1]; Each packet has header with destination IP [1]; Packets can take different routes based on congestion [1]; Reassembled at destination using sequence numbers [1]." },
+            { id: 18, cat: 'A2.2', text: "Discuss the social and ethical issues of the 'Internet of Things' (IoT) in a domestic setting.", marks: 6, ans: "Security/Privacy risks (unauthorized access to smart cameras/locks) [2]. Data harvesting by corporations [2]. Environmental impact of e-waste from redundant devices [2]." },
+            { id: 54, cat: 'A2.4', text: "Describe how a Virtual Private Network (VPN) provides secure communication across the internet.", marks: 3, ans: "Creates an encrypted tunnel [1]; Masks the user's real IP address [1]; Protects data from 'Man-in-the-middle' attacks on public networks [1]." },
+
+            // A3 Databases
             { id: 26, cat: 'A3.1', text: "Explain the goals of 1st, 2nd, and 3rd Normal Form in database design.", marks: 6, ans: "1NF: Atomic values/No repeating groups [2]. 2NF: No partial dependency on primary key [2]. 3NF: No transitive dependency [2]." },
+            { id: 55, cat: 'A3.1', text: "Identify the differences between a 'Schema' and 'Data' in a database.", marks: 2, ans: "Schema is the structural definition (table names, types) [1]; Data is the actual instance or records stored in that structure [1]." },
+            { id: 56, cat: 'A3.2', text: "Outline two advantages of using a Relational Database Management System (RDBMS) over a flat-file system.", marks: 4, ans: "Data integrity through constraints [2]; Multi-user access control and security [2]." },
+
+            // A4 Machine Learning
             { id: 29, cat: 'A4.1', text: "Distinguish between Supervised and Unsupervised Learning techniques.", marks: 3, ans: "Supervised uses labeled datasets with target outputs [1.5]. Unsupervised finds hidden patterns or structures in unlabeled data [1.5]." },
+            { id: 57, cat: 'A4.1', text: "Discuss the impact of 'Training Data Bias' on the accuracy of an AI medical diagnostic tool.", marks: 6, ans: "If data lacks diversity (age/ethnicity), tool fails for certain groups [2]. Risk of incorrect diagnosis/harm [2]. Ethical responsibility of developers to ensure representative sampling [2]." },
+
+            // B1 Computational Thinking
             { id: 32, cat: 'B1.1', text: "Define the terms 'Abstraction' and 'Decomposition' in the context of computational thinking.", marks: 4, ans: "Abstraction: Removing unnecessary details to focus on essential features [2]. Decomposition: Breaking a complex problem into smaller, manageable sub-problems [2]." },
+            { id: 58, cat: 'B1.3', text: "Explain why it is important to test an algorithm with extreme and invalid data.", marks: 3, ans: "Extreme data checks boundaries (e.g. 0 or 100 in a grade range) [1]; Invalid data checks error-handling [1]; Ensures the system doesn't crash in real-world scenarios [1]." },
+
+            // B2 Data Structures
             { id: 36, cat: 'B2.2', text: "Describe the stack operations Push, Pop, and Peek.", marks: 3, ans: "Push: Adds element to top [1]. Pop: Removes top element [1]. Peek: Returns top element without removing it [1]." },
-            { id: 45, cat: 'B4.1', text: "Explain the role of a 'Feedback Loop' in a closed-loop automated system.", marks: 3, ans: "Sensor reads current state [1]. Processor compares reading to set point [1]. Actuator makes adjustments to reduce error [1]." }
+            { id: 59, cat: 'B2.2', text: "Explain why a Linked List is preferred over an Array for a collection that changes size frequently.", marks: 3, ans: "Linked lists are dynamic in size [1]; Insertion/Deletion is more efficient as it only requires pointer changes [1]; No need to shift all subsequent elements like in an array [1]." },
+            { id: 60, cat: 'B2.4', text: "Compare the efficiency of a Linear Search and a Binary Search for a list of 1000 items.", marks: 4, ans: "Linear: Average 500 checks, works on unsorted lists [2]. Binary: Max 10 checks ($log_2 1000$), requires sorted list [2]." },
+
+            // B3 OOP
+            { id: 42, cat: 'B3.1', text: "Justify the use of private variables and public getters/setters in Object Oriented Programming.", marks: 4, ans: "Data protection (Encapsulation) [2]. Hides internal implementation from other classes [1]. Setter allows for input validation before changing state [1]." },
+            { id: 61, cat: 'B3.2', text: "Explain the concept of 'Inheritance' and how it promotes code reusability.", marks: 3, ans: "Allows a child class to acquire properties/methods of a parent [1]; Developers only write common code once in the superclass [1]; Reduces maintenance and potential for errors [1]." },
+
+            // B4 Control Systems
+            { id: 45, cat: 'B4.1', text: "Explain the role of a 'Feedback Loop' in a closed-loop automated system.", marks: 3, ans: "Sensor reads current state [1]. Processor compares reading to set point [1]. Actuator makes adjustments to reduce error [1]." },
+            { id: 62, cat: 'B4.2', text: "Outline two limitations of using a computer model to simulate weather patterns.", marks: 4, ans: "Complexity/Variables involved (Butterfly Effect) [2]. Limitations in processing power/sensor resolution [2]." }
         ];
 
         let cart = [];
@@ -178,12 +214,12 @@
             filtered.forEach(q => {
                 const inCart = cart.find(item => item.id === q.id);
                 container.innerHTML += `
-                    <div class="bg-white p-6 rounded-2xl border ${inCart ? 'border-blue-500 ring-4 ring-blue-50' : 'border-slate-200'} transition-all hover:shadow-md">
+                    <div class="bg-white p-6 rounded-2xl border ${inCart ? 'border-blue-500 ring-4 ring-blue-50' : 'border-slate-200'} transition-all hover:shadow-md flex flex-col">
                         <div class="flex justify-between items-center mb-3">
                             <span class="px-2 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest">${q.cat}</span>
                             <span class="text-xs font-bold text-slate-400">${q.marks} Marks</span>
                         </div>
-                        <p class="text-slate-800 font-medium mb-6 min-h-[3rem] line-clamp-3">${q.text}</p>
+                        <p class="text-slate-800 font-medium mb-6 flex-1">${q.text}</p>
                         <button onclick="toggleCart(${q.id})" 
                                 class="w-full py-2.5 rounded-xl font-bold transition-all ${inCart ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-blue-600 text-white hover:bg-blue-700'}">
                             ${inCart ? 'Remove' : 'Add to Assessment'}
@@ -219,7 +255,7 @@
             ms.innerHTML = '';
 
             if (cart.length === 0) {
-                paper.innerHTML = `<div class="text-center py-20 text-slate-300">
+                paper.innerHTML = `<div class="text-center py-20 text-slate-300 no-print">
                     <p class="text-xl font-bold">Your assessment is empty.</p>
                     <p>Select questions from the library to populate this paper.</p>
                 </div>`;
@@ -228,8 +264,8 @@
 
             cart.forEach((q, i) => {
                 // Paper View
-                // Providing roughly 2 lines per mark + 1 extra line
-                const lineCount = (q.marks * 2) + 1;
+                // Providing roughly 2.5 lines per mark for better space
+                const lineCount = Math.max(2, Math.floor(q.marks * 2.2));
                 paper.innerHTML += `
                     <div class="relative">
                         <div class="flex justify-between font-bold mb-2">
@@ -248,9 +284,10 @@
                     <div class="border-l-4 border-slate-900 pl-6 py-2">
                         <div class="flex justify-between font-bold text-lg mb-2">
                             <span>Question ${i + 1}</span>
-                            <span>Total Marks: ${q.marks}</span>
+                            <span>Marks: ${q.marks}</span>
                         </div>
-                        <p class="text-slate-700 italic bg-slate-50 p-4 rounded">${q.ans}</p>
+                        <p class="text-slate-500 text-xs font-bold uppercase mb-1">Theme: ${q.cat}</p>
+                        <p class="text-slate-800 bg-slate-50 p-4 rounded border border-slate-100 whitespace-pre-wrap">${q.ans}</p>
                     </div>
                 `;
             });
