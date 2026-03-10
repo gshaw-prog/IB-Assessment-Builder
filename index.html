@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IB CS 2027 Assessment Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex flex-col h-screen overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center no-print">
+            <div class="flex items-center space-gap-4">
+                <h1 class="text-xl font-bold text-blue-600">IB CS 2027 <span class="text-gray-900">Assessment Builder</span></h1>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="switchTab('library')" id="btn-library" class="px-4 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium">Question Library</button>
+                <button onclick="switchTab('preview')" id="btn-preview" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 font-medium relative">
+                    View Assessment
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-hidden">
+            <!-- Library Tab -->
+            <div id="tab-library" class="tab-content active h-full flex overflow-hidden">
+                <!-- Sidebar Filters -->
+                <div class="w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto no-print">
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Syllabus Themes</h2>
+                    <nav class="space-y-1" id="category-filters">
+                        <!-- Filters populated by JS -->
+                    </nav>
+                </div>
+
+                <!-- Question List -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                    <div id="question-container">
+                        <!-- Questions populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Tab -->
+            <div id="tab-preview" class="tab-content h-full overflow-y-auto p-10 bg-white">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-8 no-print">
+                        <div class="space-x-2">
+                            <button onclick="exportToPDF()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium">Save as PDF</button>
+                            <button onclick="toggleMarkscheme()" id="toggle-ms" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 font-medium">View Markscheme</button>
+                            <button onclick="clearAssessment()" class="text-red-600 px-6 py-2 font-medium hover:underline">Clear All</button>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-gray-500">Total Marks:</span>
+                            <span id="total-marks" class="text-2xl font-bold ml-2">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Paper Header -->
+                    <div id="paper-content" class="border-t-4 border-black pt-8">
+                        <div class="text-center mb-10">
+                            <h2 class="text-3xl font-bold mb-2">COMPUTER SCIENCE</h2>
+                            <h3 class="text-xl font-medium text-gray-600">Standard & Higher Level - Paper 1 (Mock)</h3>
+                            <p class="mt-4 text-gray-500">Instruction: Answer all questions in the spaces provided.</p>
+                        </div>
+
+                        <div id="paper-questions" class="space-y-12">
+                            <!-- Selected questions appear here -->
+                        </div>
+
+                        <div id="ms-container" class="mt-20 hidden border-t-2 border-dashed pt-10">
+                            <h2 class="text-2xl font-bold mb-6 text-blue-800">MARKSCHEME</h2>
+                            <div id="ms-questions" class="space-y-6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Question Data based on syllabus categorization
+        const questionData = [
+            { id: 1, cat: 'A1.1', text: "Identify the part of the CPU that performs logical comparisons.", marks: 1, ans: "Arithmetic Logic Unit (ALU)." },
+            { id: 2, cat: 'A1.1', text: "Explain the role of the Memory Data Register (MDR) in the fetch-execute cycle.", marks: 3, ans: "Holds the data/instruction fetched from memory [1]; or data waiting to be written [1]; acts as a buffer between memory and CPU [1]." },
+            { id: 3, cat: 'A1.1', text: "Outline the function of the Program Counter (PC).", marks: 2, ans: "Holds the memory address [1] of the next instruction to be fetched [1]." },
+            { id: 4, cat: 'A1.1', text: "Describe how the address bus and data bus are used when the CPU fetches an instruction.", marks: 4, ans: "Address bus carries location [1]; Data bus carries content [1]; Coordinated by CU [1]; Unidirectional vs Bidirectional [1]." },
+            { id: 5, cat: 'A1.1', text: "Describe the impact on system performance if the clock speed is doubled.", marks: 3, ans: "Instructions processed faster [1]; More heat generated [1]; Power drain increases [1]." },
+            { id: 6, cat: 'A1.2', text: "Distinguish between a supercomputer and a mainframe.", marks: 3, ans: "Supercomputers for high-speed calculation [1]; Mainframes for high-volume transactions [1]; Reliability focus [1]." },
+            { id: 7, cat: 'A1.2', text: "Identify two characteristics of an embedded system.", marks: 2, ans: "Single-purpose [1]; Limited resources/Minimal OS [1]." },
+            { id: 10, cat: 'A1.3', text: "Calculate the decimal equivalent of binary 11011011.", marks: 2, ans: "128+64+16+8+2+1 = 219. (1 mark for math, 1 for result)." },
+            { id: 11, cat: 'A1.3', text: "Convert the decimal value -25 into 8-bit Two’s Complement.", marks: 3, ans: "25=00011001 [1]. Invert: 11100110 [1]. Add 1: 11100111 [1]." },
+            { id: 14, cat: 'A2.1', text: "Define 'Protocol' and identify two necessary elements for a connection.", marks: 3, ans: "Set of rules [1]. Elements: Syntax, Semantics, Timing [2]." },
+            { id: 18, cat: 'A2.2', text: "Discuss the social and ethical issues of the 'Internet of Things' (IoT).", marks: 6, ans: "Security/Privacy risks [2]. Data volume issues [2]. Standardisation/Sustainability [2]." },
+            { id: 26, cat: 'A3.1', text: "Outline the goals of 1st, 2nd, and 3rd Normal Form.", marks: 6, ans: "1NF: Atomic values [2]. 2NF: No partial dependency [2]. 3NF: No transitive dependency [2]." },
+            { id: 29, cat: 'A4.1', text: "Distinguish between Supervised and Unsupervised Learning.", marks: 3, ans: "Supervised: Labeled data [1.5]. Unsupervised: Patterns in unlabeled data [1.5]." },
+            { id: 32, cat: 'B1.1', text: "Define Abstraction and Decomposition.", marks: 4, ans: "Abstraction: Hiding irrelevant detail [2]. Decomposition: Breaking problem down [2]." },
+            { id: 36, cat: 'B2.2', text: "Describe the operations Push, Pop, and Peek for a Stack.", marks: 3, ans: "Push adds [1], Pop removes [1], Peek views [1]." },
+            { id: 42, cat: 'B3.1.5', text: "Justify the use of private variables and public getters/setters.", marks: 4, ans: "Data protection [2]. Hides implementation [1]. Setter validation [1]." },
+            { id: 45, cat: 'B4.1', text: "Explain the role of a 'Feedback Loop' in a heating control system.", marks: 3, ans: "Sensor detects state [1]. Processor compares [1]. Actuator adjusts [1]." }
+        ];
+
+        let assessmentCart = [];
+        let showMarkscheme = false;
+
+        function init() {
+            renderFilters();
+            renderQuestions();
+        }
+
+        function renderFilters() {
+            const container = document.getElementById('category-filters');
+            const categories = [...new Set(questionData.map(q => q.cat.split('.')[0]))];
+            
+            container.innerHTML = `<button onclick="renderQuestions()" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-700">All Topics</button>`;
+            
+            categories.forEach(cat => {
+                container.innerHTML += `
+                    <button onclick="renderQuestions('${cat}')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">${cat} Series</button>
+                `;
+            });
+        }
+
+        function renderQuestions(filter = '') {
+            const container = document.getElementById('question-container');
+            container.innerHTML = '';
+            
+            const filtered = filter ? questionData.filter(q => q.cat.startsWith(filter)) : questionData;
+            
+            filtered.forEach(q => {
+                const inCart = assessmentCart.find(item => item.id === q.id);
+                container.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex justify-between items-start">
+                        <div class="flex-1">
+                            <span class="inline-block px-2 py-1 rounded bg-gray-100 text-gray-500 text-xs font-bold mb-2">${q.cat}</span>
+                            <p class="text-gray-900 font-medium leading-relaxed">${q.text}</p>
+                            <span class="text-sm text-gray-400 mt-2 block">[${q.marks} marks]</span>
+                        </div>
+                        <button onclick="toggleCart(${q.id})" 
+                                class="ml-4 px-4 py-2 rounded-lg font-medium transition-colors ${inCart ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-blue-600 text-white hover:bg-blue-700'}">
+                            ${inCart ? 'Remove' : 'Add to Assessment'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleCart(id) {
+            const index = assessmentCart.findIndex(q => q.id === id);
+            if (index > -1) {
+                assessmentCart.splice(index, 1);
+            } else {
+                const q = questionData.find(item => item.id === id);
+                assessmentCart.push(q);
+            }
+            updateCartUI();
+            renderQuestions();
+        }
+
+        function updateCartUI() {
+            const count = document.getElementById('cart-count');
+            count.innerText = assessmentCart.length;
+            count.classList.toggle('hidden', assessmentCart.length === 0);
+            
+            const total = assessmentCart.reduce((acc, q) => acc + q.marks, 0);
+            document.getElementById('total-marks').innerText = total;
+            
+            renderAssessment();
+        }
+
+        function renderAssessment() {
+            const qContainer = document.getElementById('paper-questions');
+            const msContainer = document.getElementById('ms-questions');
+            qContainer.innerHTML = '';
+            msContainer.innerHTML = '';
+
+            if (assessmentCart.length === 0) {
+                qContainer.innerHTML = `<p class="text-center text-gray-400 italic py-10">No questions added yet. Go to Question Library to start.</p>`;
+                return;
+            }
+
+            assessmentCart.forEach((q, i) => {
+                // Assessment Paper View
+                qContainer.innerHTML += `
+                    <div class="relative">
+                        <div class="flex justify-between font-bold mb-4">
+                            <span>Question ${i + 1}</span>
+                            <span>[${q.marks} marks]</span>
+                        </div>
+                        <p class="text-lg mb-6">${q.text}</p>
+                        <div class="space-y-4">
+                            ${Array(q.marks).fill('<div class="border-b border-gray-300 h-8"></div>').join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Markscheme View
+                msContainer.innerHTML += `
+                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                        <p class="font-bold text-blue-900 mb-2">Q${i + 1} [${q.marks}]</p>
+                        <p class="text-blue-800">${q.ans}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            document.querySelectorAll('header button').forEach(b => b.classList.replace('bg-blue-50', 'bg-gray-100'));
+            document.querySelectorAll('header button').forEach(b => b.classList.replace('text-blue-700', 'text-gray-700'));
+            
+            const activeBtn = document.getElementById('btn-' + tab);
+            activeBtn.classList.replace('bg-gray-100', 'bg-blue-50');
+            activeBtn.classList.replace('text-gray-700', 'text-blue-700');
+        }
+
+        function toggleMarkscheme() {
+            showMarkscheme = !showMarkscheme;
+            document.getElementById('ms-container').classList.toggle('hidden', !showMarkscheme);
+            document.getElementById('toggle-ms').innerText = showMarkscheme ? "Hide Markscheme" : "View Markscheme";
+        }
+
+        function clearAssessment() {
+            if (confirm('Clear all questions from current assessment?')) {
+                assessmentCart = [];
+                updateCartUI();
+                renderQuestions();
+            }
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        init();
+    </script>
+</body>
+</html>
