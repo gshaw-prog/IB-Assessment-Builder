@@ -6,36 +6,42 @@
     <title>IB CS 2027 Assessment Builder Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; }
-        .exam-font { font-family: 'Noto Serif', serif; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            -webkit-print-color-adjust: exact;
+        }
         
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         /* Writing Lines Style */
         .writing-line {
-            border-bottom: 1px solid #d1d5db;
-            height: 2rem;
+            border-bottom: 1px solid #9ca3af;
+            height: 2.2rem;
             width: 100%;
-            margin-bottom: 0.5rem;
         }
 
         @media print {
             .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            body { background: white; }
+            body { background: white; padding: 0; margin: 0; }
             .tab-content { display: block !important; }
             #tab-library { display: none !important; }
             .page-break { page-break-before: always; }
             .exam-container { padding: 0 !important; max-width: 100% !important; }
             header, .controls { display: none !important; }
-            #paper-content { box-shadow: none !important; border: none !important; }
+            #paper-content { box-shadow: none !important; border: none !important; width: 100% !important; padding: 0 !important; }
+            
+            /* Ensure the cover page takes exactly one sheet */
+            #exam-cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Box styling for candidate details */
+        .ib-box { border: 2px solid black; padding: 4px 8px; font-weight: 800; font-size: 0.75rem; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
@@ -43,19 +49,19 @@
         <!-- Header -->
         <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print shrink-0 shadow-sm z-10">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <div class="bg-slate-900 p-2 rounded-lg text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.232.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-900 leading-tight">IB CS 2027</h1>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Assessment Creator</p>
+                    <h1 class="text-lg font-black text-slate-900 leading-tight uppercase tracking-tighter">IB CS 2027</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Exam Generator Pro</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-4">
                 <div class="flex bg-slate-100 p-1 rounded-xl">
-                    <button onclick="switchTab('library')" id="btn-library" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-white shadow-sm text-blue-600">Library</button>
-                    <button onclick="switchTab('preview')" id="btn-preview" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 relative">
+                    <button onclick="switchTab('library')" id="btn-library" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-white shadow-sm text-slate-900">Library</button>
+                    <button onclick="switchTab('preview')" id="btn-preview" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 relative">
                         Assessment
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-white hidden">0</span>
                     </button>
@@ -71,8 +77,8 @@
                 <!-- Toolbar -->
                 <div class="bg-white border-b border-slate-200 p-4 px-8 flex flex-wrap gap-4 items-center no-print">
                     <div class="relative inline-block text-left group">
-                        <label class="text-xs font-bold text-slate-400 uppercase block mb-1">Filter by Theme</label>
-                        <select id="topic-select" onchange="filterByTopic(this.value)" class="block w-72 bg-slate-50 border border-slate-200 text-slate-700 py-2 px-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="text-[10px] font-black text-slate-400 uppercase block mb-1 tracking-widest">Select Syllabus Theme</label>
+                        <select id="topic-select" onchange="filterByTopic(this.value)" class="block w-72 bg-slate-50 border border-slate-200 text-slate-900 font-medium py-2 px-3 rounded-lg focus:ring-2 focus:ring-slate-900 outline-none transition-all">
                             <option value="">All Syllabus Topics</option>
                             <optgroup label="Theme A: Concepts">
                                 <option value="A1">A1: Computer Fundamentals</option>
@@ -89,7 +95,7 @@
                         </select>
                     </div>
                     <div class="ml-auto flex gap-2">
-                        <span class="text-sm text-slate-400 self-center">Showing <span id="visible-count" class="font-bold text-slate-700">0</span> questions from database</span>
+                        <span class="text-xs text-slate-400 self-center font-bold tracking-tight">Viewing <span id="visible-count" class="text-slate-900 underline">0</span> questions</span>
                     </div>
                 </div>
 
@@ -102,53 +108,96 @@
             </div>
 
             <!-- Preview View -->
-            <div id="tab-preview" class="tab-content h-full overflow-y-auto bg-slate-200 py-8 px-4 no-scrollbar">
+            <div id="tab-preview" class="tab-content h-full overflow-y-auto bg-slate-300 py-10 px-4 no-scrollbar">
                 <div class="max-w-[210mm] mx-auto">
                     <!-- Internal Controls -->
-                    <div class="flex justify-between items-center mb-6 no-print bg-white p-4 rounded-xl shadow-sm border border-slate-300">
+                    <div class="flex justify-between items-center mb-6 no-print bg-slate-900 p-4 rounded-xl shadow-lg border border-slate-800 text-white">
                         <div class="flex gap-2">
-                            <button onclick="window.print()" class="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-black font-bold flex items-center gap-2">
+                            <button onclick="window.print()" class="bg-white text-slate-900 px-5 py-2.5 rounded-lg hover:bg-slate-100 font-black text-sm flex items-center gap-2 transition-transform active:scale-95">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                Print / Save as PDF
+                                EXPORT PDF
                             </button>
-                            <button onclick="toggleMarkscheme()" id="toggle-ms" class="bg-blue-50 text-blue-700 px-5 py-2.5 rounded-lg hover:bg-blue-100 font-bold">
-                                Show Markscheme
+                            <button onclick="toggleMarkscheme()" id="toggle-ms" class="bg-slate-800 text-white border border-slate-700 px-5 py-2.5 rounded-lg hover:bg-slate-700 font-bold text-sm transition-all">
+                                SHOW MARKSCHEME
                             </button>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <button onclick="clearAssessment()" class="text-slate-400 hover:text-red-600 font-bold text-sm">Clear Paper</button>
-                            <div class="h-8 w-[1px] bg-slate-200"></div>
+                        <div class="flex items-center gap-6">
                             <div class="text-right">
-                                <p class="text-[10px] text-slate-400 uppercase font-black">Total Marks</p>
-                                <p id="total-marks" class="text-2xl font-black text-slate-900">0</p>
+                                <p class="text-[9px] text-slate-500 uppercase font-black tracking-widest">Assessment Length</p>
+                                <p id="total-marks" class="text-xl font-black text-white"><span id="total-marks-val">0</span> MARKS</p>
                             </div>
+                            <div class="h-10 w-[1px] bg-slate-800"></div>
+                            <button onclick="clearAssessment()" class="text-slate-500 hover:text-red-400 font-bold text-[10px] uppercase tracking-widest">Reset Paper</button>
                         </div>
                     </div>
 
-                    <!-- The Exam Paper -->
-                    <div id="paper-content" class="bg-white p-[20mm] shadow-xl min-h-[297mm] exam-font text-slate-900">
-                        <div class="border-b-4 border-black pb-4 mb-8">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h2 class="text-2xl font-bold tracking-tighter">COMPUTER SCIENCE</h2>
-                                    <h3 class="text-lg font-bold">CORE & HIGHER LEVEL</h3>
-                                    <p class="text-sm italic mt-1">Mock Examination - 2027 Syllabus</p>
+                    <!-- The Exam Document Wrapper -->
+                    <div id="paper-content" class="bg-white shadow-2xl min-h-[297mm] text-slate-900 relative">
+                        
+                        <!-- Official Cover Page -->
+                        <div id="exam-cover" class="p-[25mm] h-[297mm] flex flex-col justify-between border-b-2 border-slate-100">
+                            <div class="space-y-8">
+                                <!-- Candidate Header -->
+                                <div class="flex justify-between items-start">
+                                    <div class="space-y-4">
+                                        <div class="ib-box w-24">Candidate session number</div>
+                                        <div class="flex gap-1">
+                                            ${Array(4).fill('<div class="w-8 h-8 border-2 border-black flex items-center justify-center"></div>').join('')}
+                                            <div class="w-8 h-8 flex items-center justify-center font-bold text-xl">–</div>
+                                            ${Array(4).fill('<div class="w-8 h-8 border-2 border-black"></div>').join('')}
+                                        </div>
+                                    </div>
+                                    <div class="text-right uppercase">
+                                        <h1 class="text-2xl font-black tracking-tighter">Computer Science</h1>
+                                        <p class="text-sm font-bold">Standard & Higher level</p>
+                                        <p class="text-sm font-bold">Paper 1</p>
+                                    </div>
                                 </div>
-                                <div class="text-right border-2 border-black p-2 px-4">
-                                    <p class="text-xs font-bold uppercase">Candidate Number</p>
-                                    <div class="h-6 w-32 border-b border-black mt-2"></div>
+
+                                <div class="h-1 bg-black w-full"></div>
+
+                                <div class="flex justify-between font-bold text-sm">
+                                    <span>Tuesday 10 March 2026 (morning)</span>
+                                    <span>1 hour 30 minutes</span>
                                 </div>
+
+                                <!-- Instructions Block -->
+                                <div class="space-y-6 pt-10">
+                                    <h4 class="font-black text-sm uppercase tracking-widest border-b border-black pb-1">Instructions to candidates</h4>
+                                    <ul class="text-sm space-y-3 font-medium list-disc ml-4">
+                                        <li>Write your candidate session number in the boxes above.</li>
+                                        <li>Do not open this examination paper until instructed to do so.</li>
+                                        <li>Answer all questions in the boxes provided.</li>
+                                        <li>A calculator is required for this paper.</li>
+                                        <li>The maximum mark for this examination paper is [<span id="cover-total-marks">0</span> marks].</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="text-center border-4 border-black p-4">
+                                <p class="font-black text-xl uppercase tracking-tighter">Do not open this examination paper until instructed to do so.</p>
+                            </div>
+                            
+                            <div class="flex justify-between items-end text-[10px] font-bold text-slate-400 uppercase">
+                                <span>© International Baccalaureate 2027</span>
+                                <span>2227–7011</span>
                             </div>
                         </div>
 
-                        <div id="paper-questions" class="space-y-10">
-                            <!-- Selected questions JS -->
+                        <!-- Question Pages -->
+                        <div class="p-[20mm] space-y-12 page-break">
+                            <div id="paper-questions">
+                                <!-- Selected questions JS -->
+                            </div>
                         </div>
 
                         <!-- Markscheme Page -->
-                        <div id="ms-container" class="mt-16 hidden pt-12 border-t-4 border-slate-900 page-break">
-                            <h2 class="text-3xl font-black mb-8 underline uppercase">Markscheme</h2>
-                            <div id="ms-questions" class="space-y-8"></div>
+                        <div id="ms-container" class="hidden p-[20mm] page-break">
+                            <div class="border-b-4 border-slate-900 pb-4 mb-10">
+                                <h2 class="text-4xl font-black uppercase tracking-tighter">Markscheme</h2>
+                                <p class="text-sm font-bold text-slate-500 italic mt-1 uppercase tracking-widest">Confidential External Document</p>
+                            </div>
+                            <div id="ms-questions" class="space-y-10"></div>
                         </div>
                     </div>
                 </div>
@@ -158,47 +207,31 @@
 
     <script>
         const questionData = [
-            // A1 Hardware & Architecture
+            // A1 Hardware
             { id: 1, cat: 'A1.1', text: "Identify the part of the CPU that performs logical comparisons.", marks: 1, ans: "Arithmetic Logic Unit (ALU)." },
             { id: 2, cat: 'A1.1', text: "Explain the role of the Memory Data Register (MDR) in the fetch-execute cycle.", marks: 3, ans: "Holds the data/instruction fetched from memory [1]; or data waiting to be written [1]; acts as a buffer between memory and CPU [1]." },
             { id: 3, cat: 'A1.1', text: "Outline the function of the Program Counter (PC).", marks: 2, ans: "Holds the memory address [1] of the next instruction to be fetched [1]." },
             { id: 4, cat: 'A1.1', text: "Describe how the address bus and data bus are used when the CPU fetches an instruction.", marks: 4, ans: "Address bus carries location [1]; Data bus carries content [1]; Coordinated by CU [1]; Unidirectional vs Bidirectional [1]." },
-            { id: 50, cat: 'A1.2', text: "Distinguish between a supercomputer and a mainframe server.", marks: 3, ans: "Supercomputers focus on raw floating-point speed [1]; Mainframes focus on massive I/O and transaction reliability [1]; Multi-user capacity vs specific research tasks [1]." },
-            { id: 51, cat: 'A1.2', text: "Explain the purpose of an Operating System acting as an interface between user and hardware.", marks: 4, ans: "Hides hardware complexity (Abstraction) [1]; Provides GUI/CLI [1]; Manages resource allocation [1]; Executes system calls [1]." },
+            { id: 50, cat: 'A1.2', text: "Distinguish between a supercomputer and a mainframe server in terms of their primary usage.", marks: 3, ans: "Supercomputers focus on raw floating-point speed [1]; Mainframes focus on massive I/O and transaction reliability [1]; Multi-user capacity vs specific research tasks [1]." },
             { id: 11, cat: 'A1.3', text: "Convert the decimal value -25 into 8-bit Two’s Complement. Show your working.", marks: 3, ans: "25=00011001 [1]. Invert: 11100110 [1]. Add 1: 11100111 [1]." },
-            { id: 52, cat: 'A1.3', text: "Explain why the hexadecimal system is preferred over binary by computer programmers.", marks: 2, ans: "Hex is more compact/easier for humans to read [1]; 1 hex digit represents exactly 4 bits (nibble) making conversion trivial [1]." },
 
             // A2 Networks
             { id: 14, cat: 'A2.1', text: "Define 'Protocol' and identify two necessary elements for a successful connection.", marks: 3, ans: "Set of rules [1]. Elements: Syntax (format), Semantics (meaning), Timing (speed) [2]." },
             { id: 53, cat: 'A2.1', text: "Explain how Packet Switching ensures data is transmitted efficiently across a network.", marks: 4, ans: "Data broken into packets [1]; Each packet has header with destination IP [1]; Packets can take different routes based on congestion [1]; Reassembled at destination using sequence numbers [1]." },
             { id: 18, cat: 'A2.2', text: "Discuss the social and ethical issues of the 'Internet of Things' (IoT) in a domestic setting.", marks: 6, ans: "Security/Privacy risks (unauthorized access to smart cameras/locks) [2]. Data harvesting by corporations [2]. Environmental impact of e-waste from redundant devices [2]." },
-            { id: 54, cat: 'A2.4', text: "Describe how a Virtual Private Network (VPN) provides secure communication across the internet.", marks: 3, ans: "Creates an encrypted tunnel [1]; Masks the user's real IP address [1]; Protects data from 'Man-in-the-middle' attacks on public networks [1]." },
 
             // A3 Databases
             { id: 26, cat: 'A3.1', text: "Explain the goals of 1st, 2nd, and 3rd Normal Form in database design.", marks: 6, ans: "1NF: Atomic values/No repeating groups [2]. 2NF: No partial dependency on primary key [2]. 3NF: No transitive dependency [2]." },
             { id: 55, cat: 'A3.1', text: "Identify the differences between a 'Schema' and 'Data' in a database.", marks: 2, ans: "Schema is the structural definition (table names, types) [1]; Data is the actual instance or records stored in that structure [1]." },
-            { id: 56, cat: 'A3.2', text: "Outline two advantages of using a Relational Database Management System (RDBMS) over a flat-file system.", marks: 4, ans: "Data integrity through constraints [2]; Multi-user access control and security [2]." },
 
-            // A4 Machine Learning
-            { id: 29, cat: 'A4.1', text: "Distinguish between Supervised and Unsupervised Learning techniques.", marks: 3, ans: "Supervised uses labeled datasets with target outputs [1.5]. Unsupervised finds hidden patterns or structures in unlabeled data [1.5]." },
+            // A4 ML
             { id: 57, cat: 'A4.1', text: "Discuss the impact of 'Training Data Bias' on the accuracy of an AI medical diagnostic tool.", marks: 6, ans: "If data lacks diversity (age/ethnicity), tool fails for certain groups [2]. Risk of incorrect diagnosis/harm [2]. Ethical responsibility of developers to ensure representative sampling [2]." },
 
-            // B1 Computational Thinking
-            { id: 32, cat: 'B1.1', text: "Define the terms 'Abstraction' and 'Decomposition' in the context of computational thinking.", marks: 4, ans: "Abstraction: Removing unnecessary details to focus on essential features [2]. Decomposition: Breaking a complex problem into smaller, manageable sub-problems [2]." },
-            { id: 58, cat: 'B1.3', text: "Explain why it is important to test an algorithm with extreme and invalid data.", marks: 3, ans: "Extreme data checks boundaries (e.g. 0 or 100 in a grade range) [1]; Invalid data checks error-handling [1]; Ensures the system doesn't crash in real-world scenarios [1]." },
-
             // B2 Data Structures
-            { id: 36, cat: 'B2.2', text: "Describe the stack operations Push, Pop, and Peek.", marks: 3, ans: "Push: Adds element to top [1]. Pop: Removes top element [1]. Peek: Returns top element without removing it [1]." },
-            { id: 59, cat: 'B2.2', text: "Explain why a Linked List is preferred over an Array for a collection that changes size frequently.", marks: 3, ans: "Linked lists are dynamic in size [1]; Insertion/Deletion is more efficient as it only requires pointer changes [1]; No need to shift all subsequent elements like in an array [1]." },
-            { id: 60, cat: 'B2.4', text: "Compare the efficiency of a Linear Search and a Binary Search for a list of 1000 items.", marks: 4, ans: "Linear: Average 500 checks, works on unsorted lists [2]. Binary: Max 10 checks ($log_2 1000$), requires sorted list [2]." },
+            { id: 60, cat: 'B2.4', text: "Compare the efficiency of a Linear Search and a Binary Search for a list of 1000 items.", marks: 4, ans: "Linear: Average 500 checks, works on unsorted lists [2]. Binary: Max 10 checks, requires sorted list [2]." },
 
             // B3 OOP
-            { id: 42, cat: 'B3.1', text: "Justify the use of private variables and public getters/setters in Object Oriented Programming.", marks: 4, ans: "Data protection (Encapsulation) [2]. Hides internal implementation from other classes [1]. Setter allows for input validation before changing state [1]." },
-            { id: 61, cat: 'B3.2', text: "Explain the concept of 'Inheritance' and how it promotes code reusability.", marks: 3, ans: "Allows a child class to acquire properties/methods of a parent [1]; Developers only write common code once in the superclass [1]; Reduces maintenance and potential for errors [1]." },
-
-            // B4 Control Systems
-            { id: 45, cat: 'B4.1', text: "Explain the role of a 'Feedback Loop' in a closed-loop automated system.", marks: 3, ans: "Sensor reads current state [1]. Processor compares reading to set point [1]. Actuator makes adjustments to reduce error [1]." },
-            { id: 62, cat: 'B4.2', text: "Outline two limitations of using a computer model to simulate weather patterns.", marks: 4, ans: "Complexity/Variables involved (Butterfly Effect) [2]. Limitations in processing power/sensor resolution [2]." }
+            { id: 42, cat: 'B3.1', text: "Justify the use of private variables and public getters/setters in Object Oriented Programming.", marks: 4, ans: "Data protection (Encapsulation) [2]. Hides internal implementation from other classes [1]. Setter allows for input validation before changing state [1]." }
         ];
 
         let cart = [];
@@ -214,15 +247,15 @@
             filtered.forEach(q => {
                 const inCart = cart.find(item => item.id === q.id);
                 container.innerHTML += `
-                    <div class="bg-white p-6 rounded-2xl border ${inCart ? 'border-blue-500 ring-4 ring-blue-50' : 'border-slate-200'} transition-all hover:shadow-md flex flex-col">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="px-2 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest">${q.cat}</span>
-                            <span class="text-xs font-bold text-slate-400">${q.marks} Marks</span>
+                    <div class="bg-white p-6 rounded-2xl border ${inCart ? 'border-slate-900 ring-4 ring-slate-100' : 'border-slate-200'} transition-all hover:shadow-md flex flex-col group">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="px-2 py-1 rounded bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">${q.cat}</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${q.marks} Marks</span>
                         </div>
-                        <p class="text-slate-800 font-medium mb-6 flex-1">${q.text}</p>
+                        <p class="text-slate-900 font-bold mb-8 flex-1 leading-snug">${q.text}</p>
                         <button onclick="toggleCart(${q.id})" 
-                                class="w-full py-2.5 rounded-xl font-bold transition-all ${inCart ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-blue-600 text-white hover:bg-blue-700'}">
-                            ${inCart ? 'Remove' : 'Add to Assessment'}
+                                class="w-full py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${inCart ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white'}">
+                            ${inCart ? 'Remove' : 'Add Question'}
                         </button>
                     </div>
                 `;
@@ -242,7 +275,9 @@
             countEl.innerText = cart.length;
             countEl.classList.toggle('hidden', cart.length === 0);
             
-            document.getElementById('total-marks').innerText = cart.reduce((acc, q) => acc + q.marks, 0);
+            const total = cart.reduce((acc, q) => acc + q.marks, 0);
+            document.getElementById('total-marks-val').innerText = total;
+            document.getElementById('cover-total-marks').innerText = total;
             
             renderQuestions(document.getElementById('topic-select').value);
             renderAssessment();
@@ -255,39 +290,44 @@
             ms.innerHTML = '';
 
             if (cart.length === 0) {
-                paper.innerHTML = `<div class="text-center py-20 text-slate-300 no-print">
-                    <p class="text-xl font-bold">Your assessment is empty.</p>
-                    <p>Select questions from the library to populate this paper.</p>
+                paper.innerHTML = `<div class="text-center py-24 text-slate-300 no-print flex flex-col items-center gap-4">
+                    <svg class="w-16 h-16 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <div class="space-y-1">
+                        <p class="text-lg font-black uppercase tracking-tighter text-slate-400">Empty Exam Sheet</p>
+                        <p class="text-sm font-medium">Add questions from the library to build your paper.</p>
+                    </div>
                 </div>`;
                 return;
             }
 
             cart.forEach((q, i) => {
-                // Paper View
-                // Providing roughly 2.5 lines per mark for better space
-                const lineCount = Math.max(2, Math.floor(q.marks * 2.2));
+                const lineCount = Math.max(2, Math.floor(q.marks * 2.5));
+                
                 paper.innerHTML += `
-                    <div class="relative">
-                        <div class="flex justify-between font-bold mb-2">
-                            <span>Question ${i + 1}</span>
-                            <span>[${q.marks}]</span>
+                    <div class="relative pb-10">
+                        <div class="flex justify-between items-baseline mb-3">
+                            <span class="font-black text-xl tracking-tighter">${i + 1}.</span>
+                            <span class="font-bold text-sm tracking-tight">[${q.marks}]</span>
                         </div>
-                        <p class="text-lg leading-snug mb-4">${q.text}</p>
-                        <div class="writing-space mb-8">
+                        <p class="text-lg font-medium leading-relaxed mb-6">${q.text}</p>
+                        <div class="writing-space">
                             ${Array(lineCount).fill('<div class="writing-line"></div>').join('')}
                         </div>
                     </div>
                 `;
 
-                // MS View
                 ms.innerHTML += `
-                    <div class="border-l-4 border-slate-900 pl-6 py-2">
-                        <div class="flex justify-between font-bold text-lg mb-2">
-                            <span>Question ${i + 1}</span>
-                            <span>Marks: ${q.marks}</span>
+                    <div class="border-b border-slate-200 pb-10">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="font-black text-2xl tracking-tighter uppercase">Question ${i + 1}</h4>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${q.cat}</span>
+                            </div>
+                            <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-black italic">Total: ${q.marks}</span>
                         </div>
-                        <p class="text-slate-500 text-xs font-bold uppercase mb-1">Theme: ${q.cat}</p>
-                        <p class="text-slate-800 bg-slate-50 p-4 rounded border border-slate-100 whitespace-pre-wrap">${q.ans}</p>
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <p class="text-slate-800 font-medium whitespace-pre-wrap leading-relaxed">${q.ans}</p>
+                        </div>
                     </div>
                 `;
             });
@@ -305,24 +345,23 @@
             const libBtn = document.getElementById('btn-library');
             const preBtn = document.getElementById('btn-preview');
             
-            libBtn.className = `px-5 py-2 rounded-lg text-sm font-semibold transition-all ${isLib ? 'bg-white shadow-sm text-blue-600' : 'text-slate-600 hover:text-slate-900'}`;
-            preBtn.className = `px-5 py-2 rounded-lg text-sm font-semibold transition-all ${!isLib ? 'bg-white shadow-sm text-blue-600' : 'text-slate-600 hover:text-slate-900'} relative`;
+            libBtn.className = `px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${isLib ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-900'}`;
+            preBtn.className = `px-5 py-2 rounded-lg text-sm font-black uppercase tracking-widest transition-all ${!isLib ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400 hover:text-slate-900'} relative`;
         }
 
         function toggleMarkscheme() {
             showMarkscheme = !showMarkscheme;
             document.getElementById('ms-container').classList.toggle('hidden', !showMarkscheme);
-            document.getElementById('toggle-ms').innerText = showMarkscheme ? "Hide Markscheme" : "Show Markscheme";
+            document.getElementById('toggle-ms').innerText = showMarkscheme ? "HIDE MARKSCHEME" : "SHOW MARKSCHEME";
         }
 
         function clearAssessment() {
-            if (confirm('Are you sure you want to clear the current assessment?')) {
+            if (confirm('Clear entire exam paper?')) {
                 cart = [];
                 updateUI();
             }
         }
 
-        // Initialize
         renderQuestions();
     </script>
 </body>
